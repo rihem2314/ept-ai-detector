@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>EPT IA Detector</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8e9eab, #eef2f3);
+        }
+
+        .landing {
+            height: 100vh;
+            background: url('{{ url_for("static", filename="ai-human-writing-neurosciences.webp") }}') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        .landing h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .start-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .start-button:hover {
+            background-color: #0056b3;
+        }
+
+        .app-interface {
+            display: none;
+            max-width: 700px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .app-interface img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        button.submit-btn,
+        button.back-btn {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button.submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        button.back-btn {
+            background-color: #dc3545;
+            color: white;
+            margin-left: 10px;
+        }
+
+        button.back-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        hr {
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page d'accueil -->
+    <div class="landing" id="landingPage">
+        <h1>EPT IA Detector</h1>
+        <button class="start-button" onclick="showApp()">Start Now</button>
+    </div>
+
+    <!-- Interface principale -->
+    <div class="app-interface" id="appInterface">
+        <img src="{{ url_for('static', filename='images.jpg') }}" alt="Logo EPT">
+        <h2>Analysez votre texte</h2>
+
+        <!-- Formulaire pour texte -->
+        <form method="POST" enctype="multipart/form-data">
+            <textarea name="user_text" placeholder="Collez votre texte ici..."></textarea><br>
+            <button type="submit" class="submit-btn">Analyser</button>
+            <button type="button" class="back-btn" onclick="backToLanding()">Retour à l'accueil</button>
+        </form>
+
+        <hr>
+
+        <!-- Formulaire pour image -->
+        <h2>Ou téléversez une image contenant du texte :</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image_file" accept="image/*" required>
+            <br><br>
+            <button type="submit" class="submit-btn">Analyser l'image</button>
+        </form>
+
+        {% if result %}
+            <h3>Résultat :</h3>
+            <p><strong>Label :</strong> {{ result.label }}</p>
+            <p><strong>Score :</strong> {{ result.score }}</p>
+        {% endif %}
+
+        {% if result.extracted_text %}
+            <h3>Texte extrait :</h3>
+            <p>{{ result.extracted_text }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function showApp() {
+            document.getElementById("landingPage").style.display = "none";
+            document.getElementById("appInterface").style.display = "block";
+        }
+
+        function backToLanding() {
+            document.getElementById("appInterface").style.display = "none";
+            document.getElementById("landingPage").style.display = "flex";
+        }
+
+        {% if result %}
+        document.addEventListener("DOMContentLoaded", function() {
+            showApp();
+        });
+        {% endif %}
+    </script>
+</body>
+</html>
